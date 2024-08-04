@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Flex, Text } from "@mantine/core";
+import { Container } from "@mantine/core";
 import BtnContainer from "./BtnContainer";
 import ColumnContainer from "./ColumnContainer";
 import { BOARD_SECTIONS } from "@/constans";
@@ -17,7 +17,6 @@ import {
   useSensors,
   DndContext,
   useSensor,
-  DragMoveEvent,
 } from "@dnd-kit/core";
 import { Item } from "./Item";
 import capitalize from "@/utils/capitalize";
@@ -29,16 +28,11 @@ import { findBoardSectionContainer, initializeBoard } from "@/utils/board";
 import { DATA } from "@/data";
 
 const getStatusFromContainer = (container: string): Status => {
-  if (container === "entregado") {
-    return "entregado";
+  const statusArray: Status[] = ["entregado", "espera", "generacion", "pagado"];
+  if (!statusArray.includes(container as Status)) {
+    return "espera";
   }
-  if (container === "generacion") {
-    return "generacion";
-  }
-  if (container === "pagado") {
-    return "pagado";
-  }
-  return "espera";
+  return container as Status;
 };
 
 export default function AppContainer() {
@@ -96,9 +90,9 @@ export default function AppContainer() {
 
       const updatedTask = {
         ...boardSection[activeContainer][activeIndex],
-        status: getStatusFromContainer(overContainer), // Función para obtener el nuevo estado
+        status: getStatusFromContainer(overContainer), // Function to get the new state
       };
-console.log(updatedTask)
+      // TODO: console.log(updatedTask) --> When the app needs to send the information about the user that had updated, with this variable can do it.
       return {
         ...boardSection,
         [activeContainer]: [
@@ -117,8 +111,6 @@ console.log(updatedTask)
       };
     });
   };
-
-  // console.log("boardSections: ", boardSections);
 
   // When the user is on the container (same container or next container) and drag the item in the another container, this function is called
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -160,28 +152,10 @@ console.log(updatedTask)
     setActiveTaskId(null);
   };
 
-  /* const handleDragMove = ({ active, over }: DragMoveEvent) => {
-    console.log("From handleDragMove --> active: ", active);
-    console.log("From handleDragMove --> over: ", over);
-  }; */
-
   const task = activeTaskId ? getTaskById(tasks, activeTaskId) : null;
   return (
     <main className="flex h-screen items-center justify-center flex-col gap-4 bg-black pt-4">
-      <Flex
-        className="w-full max-w-full"
-        justify={"space-between"}
-        align={"center"}
-      >
-        <Text
-          style={{ color: "white", padding: "5px 10px" }}
-          className="text-white font-bold border border-cyan-300 rounded-md shadow-md shadow-cyan-300/50 cursor-default w-20 p-2"
-        >
-          ID:
-          {activeTaskId ? task?.id : null}
-        </Text>
-        <BtnContainer />
-      </Flex>
+      <BtnContainer />
       <Container
         className="flex gap-4 w-full max-w-full, h-[90%]"
         style={{ width: "100%", maxWidth: "100%" }}
@@ -192,7 +166,6 @@ console.log(updatedTask)
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
-          // onDragMove={handleDragMove}
         >
           {Object.keys(boardSections).map((columnKey) => (
             <ColumnContainer

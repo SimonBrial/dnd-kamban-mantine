@@ -48,7 +48,7 @@ export function Item({
       style={style}
     >
       <Center
-        className="h-full text-cyan-300 hover:bg-cyan-300/50 transition-all rounded-sm cursor-pointer"
+        className="h-12 text-cyan-300 hover:bg-cyan-300/30 transition-all rounded-sm cursor-pointer"
         {...attributes}
         {...listeners}
       >
